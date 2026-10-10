@@ -1,0 +1,230 @@
+@import "tailwindcss";
+
+/* Palette taken from the design header swatches:
+   teal #4D8E9E · saffron #E2582B · stone #A8ACAB · cream #F4EFE8 */
+@theme {
+  --color-cream: #f7f2ea;
+  --color-paper: #fffcf7;
+  --color-sand: #efe5d6;
+  --color-saffron: #e2582b;
+  --color-saffron-600: #c9471c;
+  --color-saffron-50: #fdf1ea;
+  --color-saffron-100: #fbe2d4;
+  --color-gold: #f2a541;
+  --color-teal: #4d8e9e;
+  --color-ink: #1b2e38;
+  --color-navy: #15333f;
+  --color-stone: #a8acab;
+  --color-muted: #5f6b70;
+  --color-line: #e6ddd0;
+  --color-whatsapp: #1fa64a;
+
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
+  --font-script: var(--font-caveat), cursive;
+  --font-deva: var(--font-tiro), var(--font-playfair), serif;
+
+  --shadow-card: 0 18px 40px -22px rgb(27 46 56 / 0.35);
+  --shadow-soft: 0 10px 30px -12px rgb(27 46 56 / 0.18);
+
+  --animate-flicker: flicker 2.4s ease-in-out infinite;
+  --animate-bob: bob 5s ease-in-out infinite;
+  --animate-drift: drift 28s linear infinite;
+  --animate-spin-slow: spin 60s linear infinite;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-kenburns: kenburns 18s ease-in-out infinite alternate;
+
+  @keyframes flicker {
+    0%, 100% { transform: scale(1) rotate(-1deg); opacity: 1; }
+    25% { transform: scale(1.06, 0.94) rotate(2deg); opacity: 0.92; }
+    50% { transform: scale(0.96, 1.05) rotate(-2deg); opacity: 1; }
+    75% { transform: scale(1.03, 0.97) rotate(1deg); opacity: 0.95; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0) rotate(-1deg); }
+    50% { transform: translateY(-6px) rotate(1deg); }
+  }
+  @keyframes drift {
+    from { transform: translateX(-10%); }
+    to { transform: translateX(110%); }
+  }
+  @keyframes kenburns {
+    from { transform: scale(1) translate(0, 0); }
+    to { transform: scale(1.12) translate(-2%, -1%); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-saffron);
+  color: white;
+}
+
+/* Subtle handmade-paper grain over the whole site */
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 35;
+  opacity: 0.4;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.35 0 0 0 0 0.25 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Watercolor brush mask used by the hero video */
+.brush-mask {
+  -webkit-mask-image: url("/media/brush-mask.svg");
+  mask-image: url("/media/brush-mask.svg");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cinematic intro is skipped before paint by an inline script */
+html[data-intro="skip"] .intro-overlay {
+  display: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.55;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Page transitions (React <ViewTransition>): the page fades and rises, the header stays put */
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+::view-transition-old(.page-out) {
+  animation: 260ms cubic-bezier(0.4, 0, 1, 1) both page-out;
+}
+::view-transition-new(.page-in) {
+  animation: 560ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both page-in;
+}
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+@keyframes page-out {
+  to {
+    opacity: 0;
+    translate: 0 -24px;
+    filter: blur(4px);
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 32px;
+    filter: blur(6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* Hero headline: CSS-driven so it paints with the HTML (fast LCP), held while the intro plays */
+.rise-word {
+  display: inline-block;
+  animation: rise-word 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+html[data-intro="playing"] .rise-word {
+  animation-play-state: paused;
+}
+/* Transform only, starting partly inside the mask: the words are painted (at full opacity)
+   in the very first frame, so they count as the LCP. Fading from ~0 opacity, or starting fully
+   hidden, makes Chrome skip them — the full-bleed hero photo is ignored as a "background". */
+@keyframes rise-word {
+  from {
+    transform: translateY(42%) rotate(3deg);
+  }
+}
+
+/* Line-art sketches draw themselves once scrolled into view */
+.sketch path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.6s ease-in-out;
+}
+.sketch.is-drawn path {
+  stroke-dashoffset: 0;
+}
+
+/* Hero entrance pieces — CSS so the whole hero paints with the HTML, held during the intro */
+.rise-in {
+  animation: rise-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) both;
+}
+.hero-zoom {
+  animation: hero-zoom 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+html[data-intro="playing"] :is(.rise-in, .hero-zoom) {
+  animation-play-state: paused;
+}
+@keyframes rise-in {
+  from {
+    opacity: 0.01;
+    transform: translateY(24px);
+  }
+}
+@keyframes hero-zoom {
+  from {
+    transform: scale(1.12);
+  }
+}
